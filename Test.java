@@ -24,7 +24,6 @@ public class Test extends JPanel {
     public Test() {
         frame = new JFrame("Julia Set Program");
         frame.setSize(1200, 800);
-        frame.setVisible(true);
         frame.add(this);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -89,6 +88,8 @@ public class Test extends JPanel {
         panelPanel.add(scrollPanel, BorderLayout.CENTER);
         panelPanel.add(boxPanel, BorderLayout.EAST);
         frame.add(panelPanel, BorderLayout.SOUTH);
+
+        frame.setVisible(true);
 
     }
 
