@@ -29,11 +29,11 @@ public class JuliaSetProgram extends JPanel {
 
     public JuliaSetProgram() {
         frame = new JFrame("Julia Set Program");
-        frame.setSize(width, (int)(height*1.05));
+        frame.setSize(width, (int)(height*1.1));
         frame.add(this);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        aBar = new JScrollBar(JScrollBar.HORIZONTAL, 0, 0, 0, precision);
+        aBar = new JScrollBar(JScrollBar.HORIZONTAL, 0, 0, -precision * 6, precision * 6);
         aBar.addAdjustmentListener(new AdjustmentListener() {
 
             @Override
@@ -43,7 +43,7 @@ public class JuliaSetProgram extends JPanel {
             }
             
         }); 
-        bBar = new JScrollBar(JScrollBar.HORIZONTAL, 0, 0, 0, precision);
+        bBar = new JScrollBar(JScrollBar.HORIZONTAL, 0, 0, -precision * 6, precision * 6);
         bBar.addAdjustmentListener(new AdjustmentListener() {
 
             @Override
@@ -76,23 +76,25 @@ public class JuliaSetProgram extends JPanel {
         
             @Override
             public ComplexNumber func(ComplexNumber num) {
-                return new ComplexNumber(num.pow(2).magnitude() + 4, 0);
+                return num.multiply(num.clone()).add(new ComplexNumber(a, b));
+                // return new ComplexNumber(num.squaredMagnitude(), 0);
             }
 
         };
 
     }
 
-    public BufferedImage juliaSetCalculations2() {
+    public BufferedImage juliaSetCalculations() {
 
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
         for(int x = 0; x < width; x++)
             for(int y = 0; y < height; y++) {
-                ComplexNumber z = new ComplexNumber((double) width / height * (2 * x - width) / width, (2 * y - height) / height).scale(1/zoom);
-                float maxIterations = 100;
+                ComplexNumber z = new ComplexNumber((double) width / height * (2.0 * x - width) / width, 
+                                                                              (2.0 * y - height) / height).scale(1/zoom);
+                float maxIterations = 300;
                 float iteration = maxIterations;
-                while(z.magnitude() < 2 && iteration > 0) {
+                while(z.squaredMagnitude() < 6 && iteration > 0) {
                     z = f.call(z);
                     iteration--;
                 }
@@ -103,7 +105,7 @@ public class JuliaSetProgram extends JPanel {
         return image;
     }
 
-    public BufferedImage juliaSetCalculations() {
+    public BufferedImage juliaSetCalculations2() {
 
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
@@ -127,8 +129,6 @@ public class JuliaSetProgram extends JPanel {
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(new Color(0, 0, 0));
-        g.fillRect(0, 0, frame.getWidth(), frame.getHeight());
 
         g.drawImage(juliaSetCalculations(), 0, 0, null);
     }

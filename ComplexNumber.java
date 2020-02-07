@@ -21,8 +21,9 @@ public class ComplexNumber {
     }
 
     public ComplexNumber multiply(ComplexNumber num) {
-        real = real * num.getReal() - imaginary * num.getImaginary();
+        double temp = real * num.getReal() - imaginary * num.getImaginary();
         imaginary = real * num.getImaginary() + imaginary * num.getReal();
+        real = temp;
         return this;
     }
 
@@ -80,6 +81,10 @@ public class ComplexNumber {
 
     public void setImaginary(double imaginary) {
         this.imaginary = imaginary;
+    }
+
+    public String toString() {
+        return real + " + i * " + imaginary;
     }
 
 }
