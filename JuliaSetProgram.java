@@ -109,7 +109,7 @@ public class JuliaSetProgram extends JPanel {
 
         for(int x = 0; x < width; x++)
             for(int y = 0; y < height; y++) {
-                double zx = 1.5 * (2 * x - width) / (zoom * width); // 1.5 * (x - width / 2) / (1/2 * zoom * width)
+                double zx = (double) width / height * (2 * x - width) / (zoom * width); // scale * (x - width / 2) / (1/2 * zoom * width)
                 double zy = (2 * y - height) / (zoom * height); // (y - height / 2) / (1/2 * zoom * height)
                 float maxIter = 300;
                 float iteration = maxIter;
