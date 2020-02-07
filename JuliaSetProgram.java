@@ -27,6 +27,8 @@ public class JuliaSetProgram extends JPanel {
 
     private ComplexFunction f;
 
+    private final float maxIterations = 100;
+
     public JuliaSetProgram() {
         frame = new JFrame("Julia Set Program");
         frame.setSize(width, (int)(height*1.1));
@@ -76,8 +78,10 @@ public class JuliaSetProgram extends JPanel {
         
             @Override
             public ComplexNumber func(ComplexNumber num) {
-                return num.multiply(num.clone()).add(new ComplexNumber(a, b));
-                // return new ComplexNumber(num.squaredMagnitude(), 0);
+                // return num.pow(4).add(new ComplexNumber(a, b));
+                num.setReal(a * Math.sin(num.getReal()));
+                num.setImaginary(b * Math.sin(num.getImaginary()));
+                return num;
             }
 
         };
@@ -92,7 +96,6 @@ public class JuliaSetProgram extends JPanel {
             for(int y = 0; y < height; y++) {
                 ComplexNumber z = new ComplexNumber((double) width / height * (2.0 * x - width) / width, 
                                                                               (2.0 * y - height) / height).scale(1/zoom);
-                float maxIterations = 300;
                 float iteration = maxIterations;
                 while(z.squaredMagnitude() < 6 && iteration > 0) {
                     z = f.call(z);
