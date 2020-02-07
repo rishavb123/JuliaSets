@@ -31,6 +31,8 @@ public class ComplexNumber {
         ComplexNumber z = new ComplexNumber(1, 0);
         for(int i = 0; i < power; i++)
             z.multiply(this);
+        for(int i = 0; i > power; i--)
+            z.divide(this);
         return z;
     }
 
