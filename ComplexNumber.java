@@ -1,4 +1,4 @@
-public class ComplexNumber {
+public class ComplexNumber implements Comparable<ComplexNumber>{
 
     private double real;
     private double imaginary;
@@ -65,6 +65,26 @@ public class ComplexNumber {
         return Math.sqrt(squaredMagnitude());
     }
 
+    public double phase() {
+        return Math.atan2(imaginary, real);
+    }
+
+    public ComplexNumber exp() {
+        return new ComplexNumber(Math.cos(imaginary), Math.sin(imaginary)).scale(Math.exp(real));
+    }
+
+    public ComplexNumber sin() {
+        return new ComplexNumber(Math.sin(real) * Math.cosh(imaginary), Math.cos(real) * Math.sinh(imaginary));
+    }
+
+    public ComplexNumber cos() {
+        return new ComplexNumber(Math.cos(real) * Math.cosh(imaginary), -Math.sin(real) * Math.sinh(imaginary));
+    }
+
+    public ComplexNumber tan() {
+        return sin().divide(cos());
+    }
+
     public ComplexNumber clone() {
         return new ComplexNumber(real, imaginary);
     }
@@ -85,6 +105,16 @@ public class ComplexNumber {
         this.imaginary = imaginary;
     }
 
+    public boolean equals(ComplexNumber x) {
+        if(x == null) return false;
+        return real == x.getReal() && imaginary == x.getImaginary();
+    }
+    
+    @Override
+    public int compareTo(ComplexNumber o) {
+        return squaredMagnitude() < o.squaredMagnitude()? -1 : squaredMagnitude() == o.squaredMagnitude()? 0: 1;
+    }
+    
     public String toString() {
         return real + " + i * " + imaginary;
     }

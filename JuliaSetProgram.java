@@ -13,11 +13,11 @@ public class JuliaSetProgram extends JPanel {
     private static final long serialVersionUID = -4665511166239098274L;
 
     private int width = 1000;
-    private int height = 600;
+    private int height = 580;
     private final int range = 5;
     private final int radius = 6;
     private final int movingRes = 10;
-    private final List<String> paramsList = Arrays.asList("a", "b", "n", "zoom", "real_offset", "imaginary_offset", "max_iterations", "saturation", "brightness");
+    private final List<String> paramsList = Arrays.asList("a", "b", "n", "zoom", "real_offset", "imaginary_offset", "max_iterations", "hue", "saturation", "brightness");
     private final Map<String, String> paramInfo = new HashMap<>();
 
     private int precision = 1000;
@@ -26,8 +26,9 @@ public class JuliaSetProgram extends JPanel {
 
         @Override
         public ComplexNumber func(ComplexNumber num) {
-            return num.pow((int)Math.round(getParam("n"))).add(new ComplexNumber(getParam("a"), getParam("b")));//.add(new ComplexNumber(0, 2 * num.getImaginary() * num.getReal()));
+            // return num.pow((int)Math.round(getParam("n"))).add(new ComplexNumber(getParam("a"), getParam("b")));//.add(new ComplexNumber(0, 2 * num.getImaginary() * num.getReal()));
             
+            // Random Function to show it works for anything
             // num.setReal(getParam("a") * Math.sin(num.getReal()));
             // num.setImaginary(getParam("b") * Math.cos(num.getImaginary()));
             // // num.multiply(new ComplexNumber(getParam("c"), getParam("d")));
@@ -39,6 +40,13 @@ public class JuliaSetProgram extends JPanel {
             // return new ComplexNumber(1, 0).add(num.pow(n).scale(n - 1)).divide(num.pow(n - 1).scale(n));
             // return num.clone().scale(2).subtract(new ComplexNumber(getParam("a"), getParam("b"))).add(num.pow(n).scale(n - 1)).divide(new ComplexNumber(1, 0).add(num.pow(n - 1).scale(n)));
             
+            // OTHER FUNCTIONS
+            // return num.exp().pow((int)Math.round(getParam("n"))).add(new ComplexNumber(getParam("a"), getParam("b")));
+            // return num.sin().pow((int)Math.round(getParam("n"))).add(new ComplexNumber(getParam("a"), getParam("b")));
+            // return num.cos().pow((int)Math.round(getParam("n"))).add(new ComplexNumber(getParam("a"), getParam("b")));
+            // return num.tan().pow((int)Math.round(getParam("n"))).add(new ComplexNumber(getParam("a"), getParam("b")));
+            return num.pow((int)Math.round(getParam("n"))).add(new ComplexNumber(getParam("a"), getParam("b"))).reciprocal();
+
         }
 
     };
@@ -65,15 +73,16 @@ public class JuliaSetProgram extends JPanel {
 
     public JuliaSetProgram() {
         frame = new JFrame("Julia Set Program");
-        frame.setSize(width, height + 22 * numOfParams + 35);
+        frame.setSize(width, height + 24 * numOfParams);
         frame.add(this);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         paramInfo.put("zoom", "1 0 100 100");
         paramInfo.put("n", "2 -10 10 1");
         paramInfo.put("max_iterations", "100 1 500 1");
-        paramInfo.put("saturation", "100 1 100 1");
-        paramInfo.put("brightness", "100 1 100 1");
+        paramInfo.put("hue", "0 0 1 1000");
+        paramInfo.put("saturation", "1 0 1 1000");
+        paramInfo.put("brightness", "1 0 1 1000");
 
         params = new double[numOfParams];
         paramScrollBars = new JScrollBar[numOfParams];
@@ -183,7 +192,7 @@ public class JuliaSetProgram extends JPanel {
     }
 
     public int getUsableHeight() {
-        return frame.getHeight() - 22 * numOfParams - 35;
+        return frame.getHeight() - 24 * numOfParams;
     }
 
     public BufferedImage juliaSetCalculations() {
@@ -208,7 +217,7 @@ public class JuliaSetProgram extends JPanel {
                         z = f.call(z);
                         iteration--;
                     }
-                    int c = iteration > 0? Color.HSBtoRGB(0.5f+0.5f*((maxIterations / iteration) % 1), (float) (0.01*getParam("saturation")), (float) (0.01*getParam("brightness"))): Color.HSBtoRGB(maxIterations / iteration, (float) getParam("saturation"), 0);
+                    int c = iteration > 0? Color.HSBtoRGB((float) (getParam("hue") + (1 - getParam("hue"))*((maxIterations / iteration) % 1)), (float) getParam("saturation"), (float) getParam("brightness")): Color.HSBtoRGB(maxIterations / iteration, (float) getParam("saturation"), 0);
                     for(int i = -res / 2; i < res / 2; i++)
                         for(int j = -res / 2; j < res / 2; j++) {
                             image.setRGB(x + i, y + j, c);
@@ -229,7 +238,7 @@ public class JuliaSetProgram extends JPanel {
                         z = f.call(z);
                         iteration--;
                     } 
-                    int c = iteration > 0? Color.HSBtoRGB(0.5f+0.5f*((maxIterations / iteration) % 1), (float) (0.01*getParam("saturation")), (float) (0.01*getParam("brightness"))): Color.HSBtoRGB(maxIterations / iteration, (float) getParam("saturation"), 0);
+                    int c = iteration > 0? Color.HSBtoRGB((float) (getParam("hue") + (1 - getParam("hue"))*((maxIterations / iteration) % 1)), (float) getParam("saturation"), (float) getParam("brightness")): Color.HSBtoRGB(maxIterations / iteration, (float) getParam("saturation"), 0);
                     image.setRGB(x, y, c);
 
                 }
