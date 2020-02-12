@@ -1,2 +1,3 @@
 @echo off
-rjava JuliaSetProgram
+javac JuliaSetProgram.java
+java JuliaSetProgram
