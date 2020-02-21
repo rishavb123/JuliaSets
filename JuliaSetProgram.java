@@ -69,6 +69,9 @@ public class JuliaSetProgram extends JPanel {
     private JPanel sliderPanel;
     private JPanel buttonPanel;
     private JPanel labelsPanel;
+    private JPanel textFieldsPanel;
+
+    private JPanel leftPanel;
     private JPanel panelsPanel;
 
     public JuliaSetProgram() {
@@ -89,9 +92,13 @@ public class JuliaSetProgram extends JPanel {
 
         sliderPanel = new JPanel(new GridLayout(numOfParams, 1));
         labelsPanel = new JPanel(new GridLayout(numOfParams, 1));
+        textFieldsPanel = new JPanel(new GridLayout(numOfParams, 1));
+
+        final JPanel root = this;
 
         for (int i = 0; i < numOfParams; i++) {
-            JLabel label = new JLabel("    " + paramsList.get(i) + " :     0");
+            JLabel label = new JLabel("    " + paramsList.get(i) + " :     ");
+            JTextField textField = new JTextField("0.0", 10);
             if (paramInfo.keySet().contains(paramsList.get(i))) {
 
                 String[] arr = paramInfo.get(paramsList.get(i)).split(" ");
@@ -101,7 +108,7 @@ public class JuliaSetProgram extends JPanel {
                 int new_precision = Integer.parseInt(arr[3]);
 
                 params[i] = defaultValue;
-                label.setText("    " + paramsList.get(i) + " :     " + defaultValue);
+                textField.setText(defaultValue + "");
 
                 final int j = i;
                 paramScrollBars[i] = new JScrollBar(JScrollBar.HORIZONTAL, defaultValue * new_precision, 0,
@@ -112,11 +119,32 @@ public class JuliaSetProgram extends JPanel {
                     public void adjustmentValueChanged(AdjustmentEvent e) {
 
                         params[j] = (double) e.getValue() / new_precision;
-                        label.setText("    " + paramsList.get(j) + " :     " + params[j]);
+                        textField.setText(params[j] + "");
                         repaint();
                     }
 
                 });
+
+                textField.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        try {
+                            double value = Double.parseDouble(e.getActionCommand());
+                            value = (int) (value * new_precision) / (double) new_precision;
+                            if(value < start) value = start;
+                            else if(value > end) value = end;
+                            params[j] = value;
+                            textField.setText(value + "");
+                            paramScrollBars[j].setValue((int) (value * new_precision));
+                        } catch(NumberFormatException exception) {
+                            JOptionPane.showMessageDialog(root, "Invalid Input", "Error", JOptionPane.ERROR_MESSAGE);
+                            textField.setText("" + params[j]);
+                        }
+                    }
+                    
+                });
+
             } else {
                 final int j = i;
                 paramScrollBars[i] = new JScrollBar(JScrollBar.HORIZONTAL, 0, 0, -precision * range, precision * range);
@@ -125,13 +153,34 @@ public class JuliaSetProgram extends JPanel {
                     @Override
                     public void adjustmentValueChanged(AdjustmentEvent e) {
                         params[j] = (double) e.getValue() / precision;
-                        label.setText("    " + paramsList.get(j) + " :     " + params[j]);
+                        textField.setText(params[j] + "");
                         repaint();
                     }
 
                 });
+                textField.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        try {
+                            double value = Double.parseDouble(e.getActionCommand());
+                            value = (int) (value * precision) / (double) precision;
+                            if(value < -range) value = -range;
+                            else if(value > range) value = range;
+                            params[j] = value;
+                            textField.setText(value + "");
+                            paramScrollBars[j].setValue((int) (value * precision));
+                        } catch(NumberFormatException exception) {
+                            JOptionPane.showMessageDialog(root, "Invalid Input", "Error", JOptionPane.ERROR_MESSAGE);
+                            textField.setText("" + params[j]);
+                        }
+                    }
+                    
+                });
             }
+
             labelsPanel.add(label);
+            textFieldsPanel.add(textField);
             sliderPanel.add(paramScrollBars[i]);
         }
 
@@ -169,10 +218,15 @@ public class JuliaSetProgram extends JPanel {
             }
             
         });
+
         buttonPanel.add(save);
         
+        leftPanel = new JPanel(new GridLayout(1, 2));
+        leftPanel.add(labelsPanel);
+        leftPanel.add(textFieldsPanel);
+
         panelsPanel = new JPanel(new BorderLayout());
-        panelsPanel.add(labelsPanel, BorderLayout.WEST);
+        panelsPanel.add(leftPanel, BorderLayout.WEST);
         panelsPanel.add(sliderPanel, BorderLayout.CENTER);
         frame.add(panelsPanel, BorderLayout.SOUTH);
 
